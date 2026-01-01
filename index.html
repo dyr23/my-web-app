@@ -3,37 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我的交互系统</title>
+    <title>手机相机交互</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 flex flex-col items-center p-4">
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 mt-10">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">📱 移动端交互测试</h1>
-        
-        <input id="todoInput" type="text" placeholder="输入点什么..." 
-            class="w-full p-4 border-2 border-blue-100 rounded-xl focus:outline-none focus:border-blue-500 mb-4">
-        
-        <button onclick="addItem()" 
-            class="w-full bg-blue-500 text-white font-bold py-4 rounded-xl active:bg-blue-700 transition duration-150">
-            添加数据
-        </button>
+<body class="bg-black flex flex-col items-center justify-center min-h-screen p-4 text-white">
 
-        <ul id="list" class="mt-6 space-y-3">
-            </ul>
+    <div class="w-full max-w-md space-y-6">
+        <h1 class="text-xl text-center font-light tracking-widest">CAMERA INTERACTION</h1>
+
+        <div class="relative overflow-hidden rounded-3xl bg-gray-900 aspect-[3/4] shadow-2xl border border-gray-800">
+            <video id="video" autoplay playsinline class="w-full h-full object-cover"></video>
+            <canvas id="canvas" class="hidden absolute inset-0 w-full h-full object-cover"></canvas>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <button onclick="startCamera()" id="startBtn" class="bg-white text-black py-4 rounded-full font-bold active:scale-95 transition">
+                开启摄像头
+            </button>
+            
+            <div id="actionBtns" class="hidden flex gap-2">
+                <button onclick="takePhoto()" class="flex-1 bg-blue-500 py-4 rounded-full font-bold active:scale-95 transition">
+                    📸 拍照
+                </button>
+                <button onclick="resetCamera()" class="flex-1 bg-gray-700 py-4 rounded-full font-bold active:scale-95 transition">
+                    重置
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        function addItem() {
-            const input = document.getElementById('todoInput');
-            const list = document.getElementById('list');
-            if (input.value === '') return;
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startBtn = document.getElementById('startBtn');
+        const actionBtns = document.getElementById('actionBtns');
 
-            const li = document.createElement('li');
-            li.className = "bg-blue-50 p-4 rounded-lg text-blue-800 flex justify-between animate-bounce";
-            li.innerHTML = `<span>${input.value}</span><button onclick="this.parentElement.remove()">❌</button>`;
+        // 启动摄像头
+        async function startCamera() {
+            try {
+                // constraints 指定调用后置摄像头
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment" }, 
+                    audio: false 
+                });
+                video.srcObject = stream;
+                startBtn.classList.add('hidden');
+                actionBtns.classList.remove('hidden');
+            } catch (err) {
+                alert("无法访问摄像头，请确保使用了 HTTPS 访问并授予了权限。");
+                console.error(err);
+            }
+        }
+
+        // 拍照功能
+        function takePhoto() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            list.appendChild(li);
-            input.value = '';
+            video.classList.add('hidden');
+            canvas.classList.remove('hidden');
+        }
+
+        // 重置
+        function resetCamera() {
+            video.classList.remove('hidden');
+            canvas.classList.add('hidden');
         }
     </script>
 </body>
