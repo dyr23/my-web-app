@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的交互系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 flex flex-col items-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 mt-10">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">📱 移动端交互测试</h1>
+        
+        <input id="todoInput" type="text" placeholder="输入点什么..." 
+            class="w-full p-4 border-2 border-blue-100 rounded-xl focus:outline-none focus:border-blue-500 mb-4">
+        
+        <button onclick="addItem()" 
+            class="w-full bg-blue-500 text-white font-bold py-4 rounded-xl active:bg-blue-700 transition duration-150">
+            添加数据
+        </button>
+
+        <ul id="list" class="mt-6 space-y-3">
+            </ul>
+    </div>
+
+    <script>
+        function addItem() {
+            const input = document.getElementById('todoInput');
+            const list = document.getElementById('list');
+            if (input.value === '') return;
+
+            const li = document.createElement('li');
+            li.className = "bg-blue-50 p-4 rounded-lg text-blue-800 flex justify-between animate-bounce";
+            li.innerHTML = `<span>${input.value}</span><button onclick="this.parentElement.remove()">❌</button>`;
+            
+            list.appendChild(li);
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
